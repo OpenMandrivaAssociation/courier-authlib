@@ -1,6 +1,6 @@
 %define name courier-authlib
-%define version 0.59.1
-%define release %mkrel 2
+%define version 0.60.1
+%define release %mkrel 1
 
 Name:		%{name}
 Version:	%{version}
