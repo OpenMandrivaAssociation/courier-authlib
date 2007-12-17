@@ -25,7 +25,6 @@ BuildRequires:	postgresql-devel
 Obsoletes:	courier-imap-utils
 Obsoletes:	libcourier-authlib0
 Conflicts:	courier-imap <= 3.0.8
-BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 The Courier authentication library provides authentication
