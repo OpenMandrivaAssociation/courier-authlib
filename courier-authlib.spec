@@ -127,7 +127,7 @@ automake-1.9
     --with-mailuser=daemon \
     --with-mailgroup=daemon \
     --with-authdaemonrc=%{_sysconfdir}/courier/authdaemonrc \
-    --with-authdaemonvar=%{_localstatedir}/authdaemon \
+    --with-authdaemonvar=%{_localstatedir}/lib/authdaemon \
     --with-makedatprog=%{_sbindir}/makedatprog \
     --with-userdb=%{_sysconfdir}/userdb \
     --with-pkgconfdir=%{_sysconfdir}/courier \
@@ -158,7 +158,7 @@ rm -rf %{buildroot}
 %makeinstall_std
 
 # fix perms
-chmod 755 %{buildroot}%{_localstatedir}/authdaemon
+chmod 755 %{buildroot}%{_localstatedir}/lib/authdaemon
 
 install -d %{buildroot}%{_var}/run/authdaemon
 
@@ -289,7 +289,7 @@ rm -rf %{buildroot}
 %{_sbindir}/authpasswd
 %{_sbindir}/makedatprog
 %{_initrddir}/courier-authdaemon
-%{_localstatedir}/authdaemon
+%{_localstatedir}/lib/authdaemon
 %{_var}/run/authdaemon
 
 %files userdb
