@@ -1,6 +1,6 @@
 %define name courier-authlib
-%define version 0.60.1
-%define release %mkrel 2
+%define version 0.60.6
+%define release %mkrel 1
 
 Name:		%{name}
 Version:	%{version}
@@ -300,7 +300,6 @@ rm -rf %{buildroot}
 %{_sbindir}/userdb
 %{_sbindir}/userdb-test-cram-md5
 %{_sbindir}/userdbpw
-%{_sbindir}/vchkpw2userdb
 %{_libdir}/courier-authlib/libauthuserdb.so
 %{_mandir}/man8/*userdb*
 
