@@ -1,5 +1,5 @@
 %define name courier-authlib
-%define version 0.60.6
+%define version 0.61.0
 %define release %mkrel 1
 
 Name:		%{name}
@@ -13,8 +13,6 @@ Source0:	http://prdownloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Source1:	courier-authlib.sysconftool.m4
 Source2:	courier-authlib.authdaemon-init
 Patch0:		courier-authlib-0.58.sysconftool.patch
-Patch1:		courier-authlib-0.58.automake.patch
-BuildRequires:	automake1.9
 BuildRequires:	expect
 BuildRequires:	libltdl-devel
 BuildRequires:	gdbm-devel
@@ -112,13 +110,10 @@ removed. Files in this package are not needed at runtime.
 %prep
 %setup -q -n %{name}-%{version}
 %patch0 -p 0 -b .sysconftool
-%patch1 -p 0 -b .automake
 
 cp %{SOURCE1} .
 
 %build
-aclocal-1.9 -I .
-automake-1.9
 %configure \
     --with-syslog=MAIL \
     --disable-ltdl-install \
@@ -269,11 +264,11 @@ rm -rf %{buildroot}
 %{_libdir}/courier-authlib/libcourierauthsasl.so.*
 %{_libdir}/courier-authlib/libcourierauthcommon.so.*
 %{_libdir}/courier-authlib/libcourierauth.so.*
-%{_libdir}/courier-authlib/libauthcustom.so
-%{_libdir}/courier-authlib/libauthpam.so
-%{_libdir}/courier-authlib/libauthpwd.so
-%{_libdir}/courier-authlib/libauthshadow.so
-%{_libdir}/courier-authlib/libauthpipe.so
+%{_libdir}/courier-authlib/libauthcustom.so.0
+%{_libdir}/courier-authlib/libauthpam.so.0
+%{_libdir}/courier-authlib/libauthpwd.so.0
+%{_libdir}/courier-authlib/libauthshadow.so.0
+%{_libdir}/courier-authlib/libauthpipe.so.0
 %{_mandir}/man1/*
 
 %files -n courier-authdaemon
@@ -300,26 +295,26 @@ rm -rf %{buildroot}
 %{_sbindir}/userdb
 %{_sbindir}/userdb-test-cram-md5
 %{_sbindir}/userdbpw
-%{_libdir}/courier-authlib/libauthuserdb.so
+%{_libdir}/courier-authlib/libauthuserdb.so.0
 %{_mandir}/man8/*userdb*
 
 %files ldap
 %defattr(-,root,root)
 %doc README.ldap authldap.schema
 %config(noreplace) %{_sysconfdir}/courier/authldaprc
-%{_libdir}/courier-authlib/libauthldap.so
+%{_libdir}/courier-authlib/libauthldap.so.0
 
 %files mysql
 %defattr(-,root,root)
 %doc README.authmysql.html README.authmysql.myownquery
 %config(noreplace) %{_sysconfdir}/courier/authmysqlrc
-%{_libdir}/courier-authlib/libauthmysql.so
+%{_libdir}/courier-authlib/libauthmysql.so.0
 
 %files pgsql
 %defattr(-,root,root)
 %doc README.authpostgres.html
 %config(noreplace) %{_sysconfdir}/courier/authpgsqlrc
-%{_libdir}/courier-authlib/libauthpgsql.so
+%{_libdir}/courier-authlib/libauthpgsql.so.0
 
 %files devel
 %defattr(-,root,root)
@@ -330,14 +325,5 @@ rm -rf %{buildroot}
 %{_libdir}/courier-authlib/*.so
 %{_includedir}/*
 %{_mandir}/man3/*
-%exclude %{_libdir}/courier-authlib/libauthpgsql.so
-%exclude %{_libdir}/courier-authlib/libauthmysql.so
-%exclude %{_libdir}/courier-authlib/libauthuserdb.so
-%exclude %{_libdir}/courier-authlib/libauthldap.so
-%exclude %{_libdir}/courier-authlib/libauthcustom.so
-%exclude %{_libdir}/courier-authlib/libauthpam.so
-%exclude %{_libdir}/courier-authlib/libauthpwd.so
-%exclude %{_libdir}/courier-authlib/libauthshadow.so
-%exclude %{_libdir}/courier-authlib/libauthpipe.so
 
 
