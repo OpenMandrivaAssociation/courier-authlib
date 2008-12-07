@@ -18,7 +18,7 @@ BuildRequires:	libltdl-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	openldap-devel
 BuildRequires:	pam-devel
-BuildRequires:	MySQL-devel
+BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
 Obsoletes:	courier-imap-utils
 Obsoletes:	libcourier-authlib0
