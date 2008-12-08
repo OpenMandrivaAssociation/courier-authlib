@@ -1,6 +1,6 @@
 %define name courier-authlib
-%define version 0.61.0
-%define release %mkrel 3
+%define version 0.61.1
+%define release %mkrel 1
 
 Name:		%{name}
 Version:	%{version}
@@ -23,7 +23,7 @@ BuildRequires:	postgresql-devel
 Obsoletes:	courier-imap-utils
 Obsoletes:	libcourier-authlib0
 Conflicts:	courier-imap <= 3.0.8
-BuildRoot:	%{_tmppath}/%{name}-%{version}
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The Courier authentication library provides authentication
