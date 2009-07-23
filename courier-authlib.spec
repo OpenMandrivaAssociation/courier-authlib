@@ -1,5 +1,5 @@
 %define name courier-authlib
-%define version 0.62.0
+%define version 0.62.4
 %define release %mkrel 1
 
 Name:		%{name}
@@ -114,7 +114,7 @@ removed. Files in this package are not needed at runtime.
 cp %{SOURCE1} .
 
 %build
-%configure \
+%configure2_5x \
     --with-syslog=MAIL \
     --disable-ltdl-install \
     --with-db=gdbm \
