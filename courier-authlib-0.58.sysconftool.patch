@@ -1,0 +1,47 @@
+--- sysconftool~	2006-08-30 19:42:47.000000000 +0200
++++ sysconftool	2006-08-30 19:42:25.000000000 +0200
+@@ -27,12 +27,13 @@
+ {
+     my $filename=shift @ARGV;
+ 
+-    $filename =~ s/\.dist$//;
++    my ($suffix) = $filename =~ /\.(\w+)/;
++    $filename =~ s/\.$suffix$//;
+ 
+     my $rc;
+ 
+     eval {
+-	$rc=sysconftool($filename, $noclobber, $force);
++	$rc=sysconftool($filename, $noclobber, $force, $suffix);
+     } ;
+ 
+     if ($@)
+@@ -52,16 +53,17 @@
+     my $filename=shift;
+     my $noclobber=shift;
+     my $force=shift;
++    my $suffix=shift;
+ 
+     my $distfile=new IO::File;
+ 
+-    die "$filename.dist: $!\n" if ! $distfile->open("< $filename.dist");
++    die "$filename.$suffix: $!\n" if ! $distfile->open("< $filename.$suffix");
+ 
+     my ($distheader, $distver);
+ 
+     ($distheader, $distver)= sysconftool_readver($distfile);
+ 
+-    die "$filename.dist: configuration header not found.\n" unless $distver;
++    die "$filename.$suffix: configuration header not found.\n" unless $distver;
+ 
+     my $oldfile=new IO::File;
+ 
+@@ -153,7 +155,7 @@
+ 	(print $newfile $distheader) || die $!;
+ 
+ 	sysconftool_writeout($newfile, $distfile, \%old_settings,
+-			     \%old_version, "$filename.dist");
++			     \%old_version, "$filename.$suffix");
+     } ;
+ 
+     if ($@)
