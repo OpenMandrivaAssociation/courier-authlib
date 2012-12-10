@@ -1,4 +1,2 @@
 sources:
-  "courier-authlib-0.63.0.tar.bz2:"	c0877274de8b58ec4c7a41cfd87ad9b37c408304
-  "courier-authlib.authdaemon-init:"	9ea390c37a30990fbd5271391b0498433b528694
-  "courier-authlib.sysconftool.m4:"	f7ec9a54fd81f136fd6bb55051f16502d15c9ecd
+  "courier-authlib-0.65.0.tar.bz2": 5318bbe653df18ca3c44ec60556f4dea945897b2

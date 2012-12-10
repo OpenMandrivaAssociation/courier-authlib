@@ -1,10 +1,6 @@
-%define name courier-authlib
-%define version 0.63.0
-%define release %mkrel 6
-
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
+Name:		courier-authlib
+Version:	0.65.0
+Release:	1
 Summary:	Courier authentication library
 Group:		System/Servers
 License:	GPL
@@ -12,7 +8,7 @@ URL:		http://www.courier-mta.org
 Source0:	http://prdownloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Source1:	courier-authlib.sysconftool.m4
 Source2:	courier-authlib.authdaemon-init
-Patch0:		courier-authlib-0.58.sysconftool.patch
+Patch0:		courier-authlib-0.65.sysconftool.patch
 BuildRequires:	expect
 BuildRequires:	libltdl-devel
 BuildRequires:	gdbm-devel
@@ -23,7 +19,6 @@ BuildRequires:	postgresql-devel
 Obsoletes:	courier-imap-utils
 Obsoletes:	libcourier-authlib0
 Conflicts:	courier-imap <= 3.0.8
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The Courier authentication library provides authentication
@@ -85,7 +80,7 @@ library. Install this package in order to be able to authenticate
 using MySQL.
 
 %package pgsql
-Summary:	MySQL support for the Courier authentication library
+Summary:	PostgreSQL support for the Courier authentication library
 Group:		System/Servers
 Requires(pre):	%{name} = %{version}
 Obsoletes:	courier-imap-pgsql
@@ -94,6 +89,16 @@ Obsoletes:	courier-imap-pgsql
 This package installs PostgreSQL support for the Courier
 authentication library. Install this package in order to be able
 to authenticate using PostgreSQL.
+
+%package sqlite
+Summary:	SQLite support for the Courier authentication library
+Group:		System/Servers
+Requires(pre):	%{name} = %{version}
+
+%description sqlite
+This package installs SQLite support for the Courier
+authentication library. Install this package in order to be able
+to authenticate using SQLite.
 
 %package devel
 Summary:	Development libraries for the Courier authentication library
@@ -149,7 +154,6 @@ cp %{SOURCE1} .
 %{__make} check
 
 %install
-rm -rf %{buildroot}
 %makeinstall_std
 
 # fix perms
@@ -184,7 +188,7 @@ perl -pi \
     %{buildroot}%{_sysconfdir}/courier/authdaemonrc
 
 cat > README.mdv << EOF
-Mandriva RPM specific notes
+ROSA RPM specific notes
 
 Upgrade
 ------
@@ -248,8 +252,16 @@ if [ "$1" = "0" ]; then
     %{_initrddir}/courier-authdaemon condrestart 1>&2;
 fi
 
-%clean
-rm -rf %{buildroot}
+%pre sqlite
+%{_libdir}/courier-authlib/authmigrate >/dev/null
+
+%post sqlite
+%{_initrddir}/courier-authdaemon condrestart 1>&2;
+    
+%postun sqlite
+if [ "$1" = "0" ]; then
+    %{_initrddir}/courier-authdaemon condrestart 1>&2;
+fi
 
 %files
 %defattr(-,root,root)
@@ -316,14 +328,170 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/courier/authpgsqlrc
 %{_libdir}/courier-authlib/libauthpgsql.so.0
 
+%files sqlite
+%defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/courier/authsqliterc
+%{_libdir}/courier-authlib/libauthsqlite.so.0
+
 %files devel
 %defattr(-,root,root)
 %doc authlib.html auth_*.html
 %{_bindir}/courierauthconfig
-%{_libdir}/courier-authlib/*.la
 %{_libdir}/courier-authlib/*.a
 %{_libdir}/courier-authlib/*.so
 %{_includedir}/*
 %{_mandir}/man3/*
 
+
+
+
+%changelog
+* Thu Mar 17 2011 Oden Eriksson <oeriksson@mandriva.com> 0.63.0-6mdv2011.0
++ Revision: 645789
+- relink against libmysqlclient.so.18
+
+* Sat Jan 01 2011 Oden Eriksson <oeriksson@mandriva.com> 0.63.0-5mdv2011.0
++ Revision: 627218
+- rebuilt against mysql-5.5.8 libs, again
+
+* Thu Dec 30 2010 Oden Eriksson <oeriksson@mandriva.com> 0.63.0-4mdv2011.0
++ Revision: 626512
+- rebuilt against mysql-5.5.8 libs
+
+* Sun Dec 05 2010 Oden Eriksson <oeriksson@mandriva.com> 0.63.0-2mdv2011.0
++ Revision: 610162
+- rebuild
+
+* Fri Feb 26 2010 Guillaume Rousse <guillomovitch@mandriva.org> 0.63.0-1mdv2010.1
++ Revision: 512127
+- update to new version 0.63.0
+
+* Thu Feb 18 2010 Oden Eriksson <oeriksson@mandriva.com> 0.62.4-2mdv2010.1
++ Revision: 507481
+- rebuild
+
+* Thu Jul 23 2009 Guillaume Rousse <guillomovitch@mandriva.org> 0.62.4-1mdv2010.0
++ Revision: 399045
+- new version
+
+* Sun Jan 18 2009 Guillaume Rousse <guillomovitch@mandriva.org> 0.62.0-1mdv2009.1
++ Revision: 331022
+- update to new version 0.62.0
+
+* Mon Dec 08 2008 Oden Eriksson <oeriksson@mandriva.com> 0.61.1-1mdv2009.1
++ Revision: 311851
+- 0.61.1
+- use lowercase mysql-devel
+
+* Sat Dec 06 2008 Oden Eriksson <oeriksson@mandriva.com> 0.61.0-3mdv2009.1
++ Revision: 311327
+- rebuilt against mysql-5.1.30 libs
+
+* Mon Sep 08 2008 Guillaume Rousse <guillomovitch@mandriva.org> 0.61.0-2mdv2009.0
++ Revision: 282763
+- use a rebind mount instead of an hard link for postfix chroot (bug #43478)
+- change initscript to re-mount the socket directory in postfix chroot, as hardlinks don't work between different filesystems
+
+* Sat Sep 06 2008 Guillaume Rousse <guillomovitch@mandriva.org> 0.61.0-1mdv2009.0
++ Revision: 281748
+- new version
+
+* Fri Jul 04 2008 Guillaume Rousse <guillomovitch@mandriva.org> 0.60.6-1mdv2009.0
++ Revision: 231884
+- new version
+
+  + Pixel <pixel@mandriva.com>
+    - adapt to %%_localstatedir now being /var instead of /var/lib (#22312)
+
+* Wed Dec 26 2007 Oden Eriksson <oeriksson@mandriva.com> 0.60.1-2mdv2008.1
++ Revision: 137976
+- rebuilt against openldap-2.4.7 libs
+
+  + Olivier Blin <oblin@mandriva.com>
+    - restore BuildRoot
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Thu Dec 13 2007 Guillaume Rousse <guillomovitch@mandriva.org> 0.60.1-1mdv2008.1
++ Revision: 119234
+- update to new version 0.60.1
+
+
+* Mon Mar 05 2007 Guillaume Rousse <guillomovitch@mandriva.org> 0.59.1-2mdv2007.0
++ Revision: 133179
+- more consistent init scripts
+- export DEBUG_LOGIN variable before launching daemon, as it seems to trust environment more than its configuration file (fix #28354)
+- new version
+
+* Fri Jan 12 2007 Guillaume Rousse <guillomovitch@mandriva.org> 0.59-1mdv2007.1
++ Revision: 107889
+- new version
+- Import courier-authlib
+
+* Wed Sep 20 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-9mdv2007.0
+- enforce courierlogger options in init script
+- add network dependencies in init script
+
+* Thu Aug 31 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-8mdv2007.0
+- fix sysconftool patch
+- fix config file merge in %%post
+- add postfix chroot support in init script (#5134)
+- decompress all patches and sources
+
+* Wed May 24 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-7mdk
+- fix buildrequires
+- fix initscript
+
+* Wed May 24 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-6mdk
+- resurect authdaemon subpackage
+- mv plugins in runtime packages
+- mv configuration in /etc/courier
+
+* Wed May 17 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-5mdk
+- conflicts with old courier-imap release (fix bug #22476)
+- obsoletes plugin packages previsouly shipped with courier-imap
+- fix configure invocation
+- fix some perms
+
+* Mon May 15 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-4mdk
+- drop vpopmail support
+- minor initscript corrections
+
+* Thu May 11 2006 Guillaume Rousse <guillomovitch@mandriva.org> 0.58-3mdk
+- no need for libification
+- rename courier-authdaemon to courier-authlib
+- don't ship .dist configuration files, and patch sysconftool to handle .rpmnew instead
+- spec cleanup
+- LSB-compliant init script
+- simpler %%post/%%pre scripts using condrestart
+- don't ship socket in package
+
+* Thu May 11 2006 Jerome Soyer <saispo@mandriva.org> 0.58-2mdk
+- Remove not needed "%%pre"
+
+* Wed May 10 2006 Jerome Soyer <saispo@mandriva.org> 0.58-1mdk
+- New release 0.58
+- Use mkrel
+
+* Thu Apr 21 2005 Oden Eriksson <oeriksson@mandriva.com> 0.55-4mdk
+- rebuilt against new postgresql libs
+
+* Sun Mar 06 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 0.55-3mdk
+- fix some minor issues
+- make it compile on 10.0 too (libtool mess)
+- make it somewhat possible to link against vpopmail
+- do some libifiction
+- rename the initscript to courier-authdaemond
+
+* Sat Mar 05 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 0.55-2mdk
+- fix deps
+
+* Fri Mar 04 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 0.55-1mdk
+- 0.55
+
+* Tue Mar 01 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 0.54-1mdk
+- initial Mandrakelinux package
+- added a more standard initscript (S2)
+- used tiny parts of the provided spec file
 
