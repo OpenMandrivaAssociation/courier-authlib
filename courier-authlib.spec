@@ -1,6 +1,6 @@
 Name:		courier-authlib
 Version:	0.65.0
-Release:	1
+Release:	2
 Summary:	Courier authentication library
 Group:		System/Servers
 License:	GPL
@@ -176,6 +176,13 @@ install -m 755 authdaemontest %{buildroot}%{_sbindir}/
 install -m 755 liblock/lockmail %{buildroot}%{_sbindir}/
 install -m 644 liblock/lockmail.1 %{buildroot}%{_mandir}/man1/
 
+# A hack to provide libraries under libdir to be able to pick up them w/o adding
+# courier-authlib to LD_LIBRARY_PATH
+for file in %{buildroot}%{_libdir}/courier-authlib/*.so
+do
+    ln -s %{_libdir}/courier-authlib/`basename $file` %{buildroot}%{_libdir}/`basename $file`
+done
+
 # fix configuration
 for file in %{buildroot}%{_sysconfdir}/courier/*.dist; do
     mv $file  %{buildroot}%{_sysconfdir}/courier/`basename $file .dist`
@@ -339,6 +346,7 @@ fi
 %{_bindir}/courierauthconfig
 %{_libdir}/courier-authlib/*.a
 %{_libdir}/courier-authlib/*.so
+%{_libdir}/*.so
 %{_includedir}/*
 %{_mandir}/man3/*
 
