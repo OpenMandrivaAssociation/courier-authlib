@@ -4,7 +4,7 @@ Release:	3
 Summary:	Courier authentication library
 Group:		System/Servers
 License:	GPL
-URL:		http://www.courier-mta.org
+URL:		https://www.courier-mta.org
 Source0:	http://prdownloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Source1:	courier-authlib.sysconftool.m4
 Source2:	courier-authlib.authdaemon-init
