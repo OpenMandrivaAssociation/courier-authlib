@@ -28,7 +28,10 @@ BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	pkgconfig(libidn2)
 BuildRequires:	procps-ng
+# iconv loads ISO-8859-1 from this package. The rfc822 test decodes it.
+BuildRequires:	locales-extra-charsets
 Requires:	procps-ng
+Requires:	locales-extra-charsets
 Obsoletes:	courier-imap-utils
 Obsoletes:	libcourier-authlib0
 Conflicts:	courier-imap <= 3.0.8
