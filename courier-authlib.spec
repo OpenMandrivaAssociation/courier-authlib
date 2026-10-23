@@ -10,6 +10,7 @@ Source1:	courier-authlib.sysconftool.m4
 Source2:	courier-authlib.authdaemon-init
 Patch0:		courier-authlib-0.65.sysconftool.patch
 BuildRequires:	autoconf
+BuildRequires:	autoconf-archive
 BuildRequires:	automake
 BuildRequires:	libtool-base
 BuildRequires:	slibtool
