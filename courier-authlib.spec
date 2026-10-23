@@ -25,6 +25,9 @@ BuildRequires:	pkgconfig(ldap)
 BuildRequires:	pam-devel
 BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
+BuildRequires:	pkgconfig(libidn2)
+BuildRequires:	procps-ng
+Requires:	procps-ng
 Obsoletes:	courier-imap-utils
 Obsoletes:	libcourier-authlib0
 Conflicts:	courier-imap <= 3.0.8
