@@ -124,7 +124,9 @@ removed. Files in this package are not needed at runtime.
 %setup -q -n %{name}-%{version}
 %patch 0 -p0 -b .sysconftool
 
-cp %{SOURCE1} .
+# %configure reruns aclocal and ignores *.m4 files in the top directory.
+mkdir -p m4
+cp %{SOURCE1} m4/sysconftool.m4
 
 %build
 %configure2_5x \
