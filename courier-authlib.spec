@@ -20,7 +20,7 @@ BuildRequires:	gdbm-devel
 BuildRequires:	pkgconfig(sqlite3)
 # 0.73 requires the Courier Unicode library 2.6
 BuildRequires:	%mklibname courier-unicode -d
-BuildRequires:	openldap-devel
+BuildRequires:	pkgconfig(ldap)
 BuildRequires:	pam-devel
 BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
