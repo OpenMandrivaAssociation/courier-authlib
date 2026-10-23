@@ -132,7 +132,19 @@ removed. Files in this package are not needed at runtime.
 mkdir -p m4
 cp %{SOURCE1} m4/sysconftool.m4
 
+# slibtoolize installs a stub ltmain.sh. aclocal has to see slibtool's
+# macros, or the generated libtool script exits before it links.
+find . -name configure.ac | while read f; do
+	d=$(dirname "$f")
+	if grep -qE 'LT_INIT|LIBTOOL' "$f"; then
+		mkdir -p "$d/m4"
+		cp -a /usr/share/slibtool/slibtool.m4 "$d/m4/"
+		cp -a /usr/share/slibtool/sltdl.m4 "$d/m4/"
+	fi
+done
+
 %build
+export slibtool_prefer_sltdl=no
 %configure2_5x \
     --with-syslog=MAIL \
     --disable-ltdl-install \
