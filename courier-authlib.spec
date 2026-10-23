@@ -173,6 +173,10 @@ export slibtool_prefer_sltdl=no
     --with-mysql-libs=%{_libdir} \
     --with-mysql-includes=%{_includedir}/mysql \
     --with-authcustom
+# Subdirectory rebuilds update m4 files that the top configure depends on.
+# Make would then rerun aclocal without the m4 include path.
+find . \( -name configure -o -name aclocal.m4 -o -name Makefile.in -o -name '*.h.in' \) -exec touch {} +
+find . \( -name config.status -o -name stamp-h -o -name stamp-h1 \) -exec touch {} +
 %make
 %make authinfo
 
