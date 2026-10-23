@@ -194,19 +194,20 @@ chmod 755 %{buildroot}%{_localstatedir}/lib/authdaemon
 install -d %{buildroot}%{_var}/run/authdaemon
 
 install -m 755 sysconftool %{buildroot}%{_libdir}/courier-authlib/
-install -m 755 authmigrate %{buildroot}%{_libdir}/courier-authlib/
 
 install -d -m 755 %{buildroot}%{_initrddir}
 install -m 755 %{SOURCE2} %{buildroot}%{_initrddir}/courier-authdaemon
-mv %{buildroot}%{_libdir}/courier-authlib/authdaemond %{buildroot}%{_sbindir}/authdaemond
-
-mv %{buildroot}%{_libdir}/courier-authlib/makedatprog %{buildroot}%{_sbindir}/makedatprog
+mv %{buildroot}%{_libexecdir}/courier-authlib/authdaemond %{buildroot}%{_sbindir}/authdaemond
+# The install hook copies the libtool wrapper. Ship the linked binary.
+rm -f %{buildroot}%{_libexecdir}/courier-authlib/makedatprog
+install -m 755 libs/makedat/.libs/makedatprog %{buildroot}%{_sbindir}/makedatprog
+install -m 755 userdb/.libs/userdbpw %{buildroot}%{_sbindir}/userdbpw
 
 # some utils...
 install -m 755 authinfo %{buildroot}%{_sbindir}/
-install -m 755 authdaemontest %{buildroot}%{_sbindir}/
-install -m 755 liblock/lockmail %{buildroot}%{_sbindir}/
-install -m 644 liblock/lockmail.1 %{buildroot}%{_mandir}/man1/
+install -m 755 .libs/authdaemontest %{buildroot}%{_sbindir}/
+install -m 755 libs/liblock/.libs/lockmail %{buildroot}%{_sbindir}/
+install -m 644 libs/liblock/lockmail.1 %{buildroot}%{_mandir}/man1/
 
 # A hack to provide libraries under libdir to be able to pick up them w/o adding
 # courier-authlib to LD_LIBRARY_PATH
@@ -239,7 +240,6 @@ modified, and run sysconftools script during upgrade automatically.
 EOF
 
 %post -n courier-authdaemon
-%{_libdir}/courier-authlib/authmigrate >/dev/null
 if [ -f %{_sysconfdir}/courier/authdaemonrc.rpmnew ]; then
     %{_libdir}/courier-authlib/sysconftool %{_sysconfdir}/courier/authdaemonrc.rpmnew >/dev/null
 fi
@@ -257,7 +257,6 @@ if [ "$1" = "0" ]; then
 fi
 
 %post ldap
-%{_libdir}/courier-authlib/authmigrate >/dev/null
 if [ -f %{_sysconfdir}/courier/authldaprc.rpmnew ]; then
     %{_libdir}/courier-authlib/sysconftool %{_sysconfdir}/courier/authldaprc.rpmnew >/dev/null
 fi
@@ -269,7 +268,6 @@ if [ "$1" = "0" ]; then
 fi
 
 %post mysql
-%{_libdir}/courier-authlib/authmigrate >/dev/null
 if [ -f %{_sysconfdir}/courier/authmysqlrc.rpmnew ]; then
     %{_libdir}/courier-authlib/sysconftool %{_sysconfdir}/courier/authmysqlrc.rpmnew >/dev/null
 fi
@@ -280,9 +278,6 @@ if [ "$1" = "0" ]; then
     %{_initrddir}/courier-authdaemon condrestart 1>&2;
 fi
 
-%pre pgsql
-%{_libdir}/courier-authlib/authmigrate >/dev/null
-
 %post pgsql
 %{_initrddir}/courier-authdaemon condrestart 1>&2;
     
@@ -290,9 +285,6 @@ fi
 if [ "$1" = "0" ]; then
     %{_initrddir}/courier-authdaemon condrestart 1>&2;
 fi
-
-%pre sqlite
-%{_libdir}/courier-authlib/authmigrate >/dev/null
 
 %post sqlite
 %{_initrddir}/courier-authdaemon condrestart 1>&2;
@@ -305,21 +297,21 @@ fi
 %files
 %defattr(-,root,root)
 %doc README.mdv README README.authdebug.html README.html README_authlib.html
-%doc NEWS COPYING* AUTHORS ChangeLog liblock/lockmail.html liblog/courierlogger.html
+%doc NEWS COPYING* AUTHORS ChangeLog libs/liblock/lockmail.html liblog/courierlogger.html
 %dir %{_sysconfdir}/courier
 %dir %{_libdir}/courier-authlib
-%{_libdir}/courier-authlib/authmigrate
-%{_libdir}/courier-authlib/authsystem.passwd
+%dir %{_libexecdir}/courier-authlib
+%{_libexecdir}/courier-authlib/authsystem.passwd
 %{_libdir}/courier-authlib/sysconftool
 %{_libdir}/courier-authlib/libcourierauthsaslclient.so.*
 %{_libdir}/courier-authlib/libcourierauthsasl.so.*
 %{_libdir}/courier-authlib/libcourierauthcommon.so.*
 %{_libdir}/courier-authlib/libcourierauth.so.*
-%{_libdir}/courier-authlib/libauthcustom.so.0
-%{_libdir}/courier-authlib/libauthpam.so.0
-%{_libdir}/courier-authlib/libauthpwd.so.0
-%{_libdir}/courier-authlib/libauthshadow.so.0
-%{_libdir}/courier-authlib/libauthpipe.so.0
+%{_libdir}/courier-authlib/libauthcustom.so.*
+%{_libdir}/courier-authlib/libauthpam.so.*
+%{_libdir}/courier-authlib/libauthpwd.so.*
+%{_libdir}/courier-authlib/libauthshadow.so.*
+%{_libdir}/courier-authlib/libauthpipe.so.*
 %{_mandir}/man1/*
 
 %files -n courier-authdaemon
@@ -344,39 +336,37 @@ fi
 %{_sbindir}/makeuserdb
 %{_sbindir}/pw2userdb
 %{_sbindir}/userdb
-%{_sbindir}/userdb-test-cram-md5
 %{_sbindir}/userdbpw
-%{_libdir}/courier-authlib/libauthuserdb.so.0
+%{_libdir}/courier-authlib/libauthuserdb.so.*
 %{_mandir}/man8/*userdb*
 
 %files ldap
 %defattr(-,root,root)
-%doc README.ldap authldap.schema
+%doc README.ldap
 %config(noreplace) %{_sysconfdir}/courier/authldaprc
-%{_libdir}/courier-authlib/libauthldap.so.0
+%{_libdir}/courier-authlib/libauthldap.so.*
 
 %files mysql
 %defattr(-,root,root)
 %doc README.authmysql.html README.authmysql.myownquery
 %config(noreplace) %{_sysconfdir}/courier/authmysqlrc
-%{_libdir}/courier-authlib/libauthmysql.so.0
+%{_libdir}/courier-authlib/libauthmysql.so.*
 
 %files pgsql
 %defattr(-,root,root)
 %doc README.authpostgres.html
 %config(noreplace) %{_sysconfdir}/courier/authpgsqlrc
-%{_libdir}/courier-authlib/libauthpgsql.so.0
+%{_libdir}/courier-authlib/libauthpgsql.so.*
 
 %files sqlite
 %defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/courier/authsqliterc
-%{_libdir}/courier-authlib/libauthsqlite.so.0
+%{_libdir}/courier-authlib/libauthsqlite.so.*
 
 %files devel
 %defattr(-,root,root)
 %doc authlib.html auth_*.html
 %{_bindir}/courierauthconfig
-%{_libdir}/courier-authlib/*.a
 %{_libdir}/courier-authlib/*.so
 %{_libdir}/*.so
 %{_includedir}/*
