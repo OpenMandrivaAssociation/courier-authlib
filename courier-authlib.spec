@@ -1,6 +1,6 @@
 Name:		courier-authlib
-Version:	0.65.0
-Release:	3
+Version:	0.73.2
+Release:	1
 Summary:	Courier authentication library
 Group:		System/Servers
 License:	GPL
@@ -17,6 +17,9 @@ BuildRequires:	make
 BuildRequires:	expect
 BuildRequires:	libltdl-devel
 BuildRequires:	gdbm-devel
+BuildRequires:	pkgconfig(sqlite3)
+# 0.73 requires the Courier Unicode library 2.6
+BuildRequires:	%mklibname courier-unicode -d
 BuildRequires:	openldap-devel
 BuildRequires:	pam-devel
 BuildRequires:	mysql-devel
@@ -119,7 +122,7 @@ removed. Files in this package are not needed at runtime.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p 0 -b .sysconftool
+%patch 0 -p0 -b .sysconftool
 
 cp %{SOURCE1} .
 
