@@ -9,6 +9,7 @@ Source0:	http://prdownloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Source1:	courier-authlib.sysconftool.m4
 Source2:	courier-authlib.authdaemon-init
 Patch0:		courier-authlib-0.65.sysconftool.patch
+Patch1:		courier-authlib-0.73.2-tcpremoteip.patch
 BuildRequires:	autoconf
 BuildRequires:	autoconf-archive
 BuildRequires:	automake
@@ -127,6 +128,7 @@ removed. Files in this package are not needed at runtime.
 %prep
 %setup -q -n %{name}-%{version}
 %patch 0 -p0 -b .sysconftool
+%patch 1 -p1
 
 # The configure step reruns aclocal and ignores *.m4 files in the top directory.
 mkdir -p m4

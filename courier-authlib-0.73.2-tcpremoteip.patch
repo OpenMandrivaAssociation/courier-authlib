@@ -1,0 +1,23 @@
+--- a/authdaemond.c
++++ b/authdaemond.c
+@@ -46,7 +46,7 @@
+ 
+ static struct authstaticinfolist *modulelist=NULL;
+ 
+-char tcpremoteip[40];
++extern char tcpremoteip[40];
+ 
+ static int mksocket()
+ {
+--- a/authsyscommon.c
++++ b/authsyscommon.c
+@@ -19,6 +19,9 @@
+ #include	"courierauthstaticlist.h"
+ #include	"courierauthdebug.h"
+ 
++/* One copy, in the library both authdaemond and the PAM module link. */
++char tcpremoteip[40];
++
+ 
+ 
+ struct callback_info {
